@@ -1,0 +1,13 @@
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Environment files (todos los .env)
+ms-customer/.env
+ms-orders/.env

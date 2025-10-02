@@ -1,0 +1,46 @@
+CREATE TABLE customers (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  phone VARCHAR(20),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE products (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  sku VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  price_cents INT NOT NULL,
+  stock INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orders (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  customer_id BIGINT NOT NULL,
+  status ENUM('CREATED','CONFIRMED','CANCELED') DEFAULT 'CREATED',
+  total_cents INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+CREATE TABLE order_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  order_id BIGINT NOT NULL,
+  product_id BIGINT NOT NULL,
+  qty INT NOT NULL,
+  unit_price_cents INT NOT NULL,
+  subtotal_cents INT NOT NULL,
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+CREATE TABLE idempotency_keys (
+  `key` VARCHAR(100) PRIMARY KEY,
+  target_type VARCHAR(50),
+  target_id BIGINT,
+  status VARCHAR(20),
+  response_body JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP
+);
