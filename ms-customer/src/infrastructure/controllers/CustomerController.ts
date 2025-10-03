@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { CustomerService } from "../../application/CustomerService";
-import { TypeormCustomerRepository } from "../repositories/MySQLCustomerRepository";
+import { TypeormCustomerRepository } from "../repositories/TypeormCustomerRepository";
 
 const router = Router();
 
