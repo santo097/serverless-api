@@ -5,6 +5,7 @@ import { TypeormProductRepository } from "../repositories/TypeormProductReposito
 import { TypeormIdempotencyKeyRepository } from "../repositories/TypeormIdempotencyKeyRepository";
 import { IdempotencyKeyService } from "../../application/IdempotencyKeyService";
 import { HttpCustomerValidator } from "../external/http/HttpCustomerValidator";
+import { env } from "../config/env";
 
 const router = Router();
 
@@ -13,7 +14,7 @@ const orderRepository = new TypeormOrderRepository();
 const productRepository = new TypeormProductRepository();
 const idempotencyRepo = new TypeormIdempotencyKeyRepository();
 const idempotencyService = new IdempotencyKeyService(idempotencyRepo);
-const httpCustomerValidator = new HttpCustomerValidator();
+const httpCustomerValidator = new HttpCustomerValidator(env.services.customer.url);
 
 const orderService = new OrderService(
   orderRepository,
@@ -25,14 +26,29 @@ const orderService = new OrderService(
 // Crear orden
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const order = await orderService.createOrder(req.body);
+
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return res.status(401).json({ error: "Authorization header missing" });
+    }
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ error: "Bearer token missing" });
+    }
+
+    const order = await orderService.createOrder(req.body, token);
     res.status(201).json(order.toPrimitives());
   } catch (err: any) {
+    if (err.message.includes("Customer not found")) {
+      return res.status(404).json({ error: err.message });
+    }
+    if (err.message.includes("Error communicating with Customer Service")) {
+      return res.status(502).json({ error: err.message });
+    }
     res.status(400).json({ error: err.message });
   }
 });
 
-// Obtener orden por ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {
     const order = await orderService.getOrderById(Number(req.params.id));
@@ -64,7 +80,7 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-// Confirmar orden con idempotency key
+
 router.post("/:id/confirm", async (req: Request, res: Response) => {
   try {
     const idempotencyKey = req.headers["idempotency-key"] as string;

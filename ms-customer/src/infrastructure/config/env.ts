@@ -14,4 +14,7 @@ export const env = {
     password: process.env.DB_PASSWORD || "",
     database: process.env.DB_NAME || "test",
   },
+  auth: {
+    serviceToken: process.env.SERVICE_TOKEN || "default_service_token",
+  },
 };

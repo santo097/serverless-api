@@ -1,17 +1,17 @@
 import axios from "axios";
 import { ICustomerValidator } from "../../../domain/ports/usecases/ICustomerValidator";
-import { env } from "../../config/env";
 
 export class HttpCustomerValidator implements ICustomerValidator {
   private readonly baseUrl: string;
 
-  constructor() {
-    this.baseUrl = env.services.customer.url;
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl;
   }
 
-  async validateCustomerExists(customerId: number): Promise<boolean> {
+  async validateCustomerExists(customerId: number, token?: string): Promise<boolean> {
     try {
-      const response = await axios.get(`${this.baseUrl}/customers/${customerId}`);
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      const response = await axios.get(`${this.baseUrl}/customers/internal/customers/${customerId}`, { headers });
       return response.status === 200;
     } catch (err: any) {
       if (err.response?.status === 404) return false;

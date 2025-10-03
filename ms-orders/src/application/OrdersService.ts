@@ -9,7 +9,7 @@ import { OrderItem } from "../domain/entities/OrderItem";
 import { OrderStatus } from "../domain/entities/OrderStatus";
 
 import { ProductNotFoundError } from "../domain/errors/ProductErrors";
-import { OrderNotFoundError, OrderAlreadyConfirmedError } from "../domain/errors/OrderErrors";
+import { OrderNotFoundError } from "../domain/errors/OrderErrors";
 import { CustomerNotFoundError } from "../domain/errors/CustomerNotFoundError";
 
 export class OrderService implements IOrderUseCases {
@@ -20,56 +20,59 @@ export class OrderService implements IOrderUseCases {
     private readonly customerValidator: ICustomerValidator
   ) {}
 
-
-
-  /** Crear orden con validación de cliente, stock y totales */
   async createOrder(input: {
     customerId: number;
-    items: { productId: number; qty: number }[];
-  }): Promise<Order> {
-    // ✅ 1. Validar cliente externo vía puerto
-    const exists = await this.customerValidator.validateCustomerExists(input.customerId);
+    items: { productId: number; qty?: number; quantity?: number }[];
+  }, token: string): Promise<Order> {
+
+    // Validar cliente con token recibido
+    const exists = await this.customerValidator.validateCustomerExists(input.customerId, token);
     if (!exists) {
       throw new CustomerNotFoundError(input.customerId);
     }
 
-    // ✅ 2. Validar productos y stock
     const orderItems: OrderItem[] = [];
     for (const item of input.items) {
+      const qty = Number(item.qty ?? item.quantity);
+      if (!Number.isInteger(qty) || qty <= 0) {
+        throw new Error(`Invalid quantity for product ${item.productId}`);
+      }
+
       const product = await this.productRepo.findById(item.productId);
       if (!product) throw new ProductNotFoundError(item.productId);
 
-      if (product.stock < item.qty) {
+      const priceCents = Number(product.priceCents);
+      if (!Number.isInteger(priceCents) || priceCents <= 0) {
+        throw new Error(`Invalid price for product ${product.id}`);
+      }
+
+      if (product.stock < qty) {
         throw new Error(`Not enough stock for product ${product.id}`);
       }
 
-      // Reducir stock en memoria y persistir
-      product.stock -= item.qty;
+      product.stock -= qty;
       await this.productRepo.update(product);
 
-      // Construir order item
       const orderItem = OrderItem.create({
-        orderId: 0, // se asigna al persistir la orden
+        orderId: 0,
         productId: product.id,
-        qty: item.qty,
-        unitPriceCents: product.priceCents,
+        qty,
+        unitPriceCents: priceCents,
+        subtotalCents: qty * priceCents,
       });
+
       orderItems.push(orderItem);
     }
 
-    // ✅ 3. Crear la orden en estado CREATED
     const order = Order.create({
       customerId: input.customerId,
       items: orderItems,
       status: OrderStatus.CREATED,
     });
 
-    // ✅ 4. Persistir orden y devolver
     return this.orderRepo.create(order);
   }
-
-
-
+  
   async getOrderById(id: number): Promise<Order> {
     const order = await this.orderRepo.findById(id);
     if (!order) throw new OrderNotFoundError(id);

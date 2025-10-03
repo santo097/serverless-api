@@ -1,13 +1,12 @@
 import { Request, Response, Router } from "express";
 import { CustomerService } from "../../application/CustomerService";
 import { TypeormCustomerRepository } from "../repositories/TypeormCustomerRepository";
+import { serviceTokenMiddleware } from "../middleware/serviceTokenMiddleware";
 
 const router = Router();
 
-
 const customerRepository = new TypeormCustomerRepository();
 const customerService = new CustomerService(customerRepository);
-
 
 router.post("/", async (req: Request, res: Response) => {
   try {
@@ -31,7 +30,16 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
+router.get("/internal/customers/:id", serviceTokenMiddleware, async (req: Request, res: Response) => {
+  try {
+    const customer = await customerService.getCustomerById(Number(req.params.id));
+    if (!customer) return res.status(404).json({ error: "Customer not found" });
 
+    res.json(customer.toPrimitives());
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 router.get("/", async (_req: Request, res: Response) => {
   try {
