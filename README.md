@@ -1,4 +1,4 @@
-🏗️ Monorepo Serverless-API
+ Monorepo Serverless-API
 
 Este repositorio contiene el sistema mínimo compuesto por:
 
@@ -16,7 +16,7 @@ README.md (este): documentación principal del proyecto
 
 openapi.yaml por cada servicio para documentación formal
 
-🎯 Objetivo del sistema
+ Objetivo del sistema
 
 Construir dos APIs que operan sobre MySQL, documentadas y desplegables con Docker Compose.
 
@@ -30,7 +30,7 @@ Confirmación de la orden con X-Idempotency-Key
 
 Devuelve un JSON consolidado con los datos del cliente, orden confirmada y items
 
-📂 Estructura del repo
+ Estructura del repo
 /serverless-api
   ├── customers-api/
   ├── orders-api/
@@ -43,7 +43,7 @@ Devuelve un JSON consolidado con los datos del cliente, orden confirmada y items
   ├── openapi-customer.yaml
   └── openapi-orders.yaml
 
-⚙️ Configuración y dependencias
+ Configuración y dependencias
 
 Cada microservicio tiene su propio .env con variables de entorno como:
 
@@ -65,7 +65,7 @@ Documentación OpenAPI 3.0 para cada API
 
 Scripts comunes sugeridos: dev, start, migrate, seed, build, test
 
-🚀 Instrucciones para levantar local
+Instrucciones para levantar local
 
 Asegúrate de tener Docker y Docker Compose instalados.
 
@@ -95,7 +95,7 @@ npx serverless offline
 El endpoint será algo como:
 POST http://localhost:3000/orchestrate
 
-🧪 Ejemplos de uso
+ Ejemplos de uso
 Crear cliente (customers)
 curl -X POST http://localhost:3001/customers \
   -H "Content-Type: application/json" \
@@ -111,7 +111,7 @@ curl -X POST http://localhost:3000/orchestrate \
   -H "Content-Type: application/json" \
   -d '{"customerId":1,"items":[{"productId":1,"qty":2}]}'
 
-📄 Documentación OpenAPI
+ Documentación OpenAPI
 
 openapi-customer.yaml: especifica los endpoints de ms-customer
 
@@ -119,7 +119,7 @@ openapi-orders.yaml: especifica los endpoints de ms-orders
 
 Puedes cargarlos en Swagger UI o Editor para visualización y pruebas.
 
-✅ Criterios de aceptación
+ Criterios de aceptación
 
 Ambas APIs funcionan, están documentadas y levantan con Docker Compose.
 

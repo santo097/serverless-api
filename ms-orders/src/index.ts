@@ -47,10 +47,10 @@ async function bootstrap() {
 
     // Levantar servidor
     app.listen(env.app.port, () => {
-      console.log(`🚀 ${process.env.SERVICE_NAME || "orders-api"} running on port ${env.app.port}`);
+      console.log(` ${process.env.SERVICE_NAME || "orders-api"} running on port ${env.app.port}`);
     });
   } catch (err) {
-    console.error("❌ Failed to start application", err);
+    console.error(" Failed to start application", err);
     process.exit(1);
   }
 }

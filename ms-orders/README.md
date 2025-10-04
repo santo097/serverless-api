@@ -1,5 +1,5 @@
-📦 ms-orders — API de Productos y Órdenes
-🎯 Propósito
+ ms-orders — API de Productos y Órdenes
+ Propósito
 
 El microservicio ms-orders se encarga de:
 
@@ -13,7 +13,7 @@ Cumplir con las reglas de negocio de stock, totales, idempotencia y cancelación
 
 Este servicio forma parte del sistema mínimo compuesto por dos APIs y un Lambda orquestador.
 
-🧩 Tecnologías usadas
+ Tecnologías usadas
 
 Node.js + Express
 
@@ -27,7 +27,7 @@ Documentación OpenAPI
 
 Se puede levantar junto con otros servicios mediante Docker Compose
 
-⚙️ Variables de entorno
+ Variables de entorno
 
 Archivo: ms-orders/.env
 
@@ -51,7 +51,7 @@ SERVICE_TOKEN=classified-access-allowed
 
 En Docker Compose, se debe remapear CUSTOMER_SERVICE_URL a http://customers-api:3001 si los servicios corren en containers.
 
-▶️ Cómo levantar ms-orders
+ Cómo levantar ms-orders
 Con Docker Compose (parte del monorepo)
 
 Desde la raíz del proyecto:
@@ -83,7 +83,7 @@ seed carga datos de ejemplo
 
 dev arranca en modo desarrollo (recarga automática)
 
-🛣️ Endpoints del API
+ Endpoints del API
 Productos
 
 POST /products
@@ -156,7 +156,7 @@ Si la orden está CREATED, se cancela y restablece stock
 
 Si está CONFIRMED, solo puede cancelarse dentro de 10 minutos
 
-🔐 Interacción con Customers (endpoint interno)
+ Interacción con Customers (endpoint interno)
 
 Cuando ms-orders necesita validar un cliente, hace una llamada:
 
@@ -170,7 +170,7 @@ Authorization: Bearer classified-access-allowed
 
 Si el token no coincide o no se proporciona, se lanza un error de autorización.
 
-📄 Documentación OpenAPI
+ Documentación OpenAPI
 
 El archivo de especificación está en:
 
@@ -179,7 +179,7 @@ ms-orders/openapi.yaml
 
 Incluye todos los endpoints, esquemas (Producto, Orden, Items) y ejemplos. Puedes usar Swagger UI para visualizarlo.
 
-🧪 Ejemplos cURL
+ Ejemplos cURL
 Crear producto
 curl -X POST http://localhost:3002/products \
   -H "Content-Type: application/json" \
@@ -197,7 +197,7 @@ curl -X POST http://localhost:3002/orders/5/confirm \
 Cancelar orden
 curl -X POST http://localhost:3002/orders/5/cancel
 
-🔧 Scripts disponibles (o sugeridos)
+ Scripts disponibles (o sugeridos)
 
 Dentro de ms-orders/package.json:
 
@@ -213,7 +213,7 @@ seed → cargar datos de ejemplo
 
 test → pruebas (si se implementan)
 
-📋 Flujo de uso esperado
+ Flujo de uso esperado
 
 Se crean productos usando el API de productos.
 
