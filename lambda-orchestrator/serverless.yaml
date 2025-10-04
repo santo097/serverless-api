@@ -1,0 +1,24 @@
+service: lambda-orchestrator
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: us-east-1
+  environment:
+    CUSTOMER_SERVICE_URL: "http://localhost:3001"
+    ORDER_SERVICE_URL: "http://localhost:3002"
+    SERVICE_TOKEN: "classified-access-allowed"
+
+plugins:
+  - serverless-offline
+
+functions:
+  orchestrator:
+    handler: handler.main
+    events:
+      - http:
+          path: orchestrate
+          method: post
+          cors: true

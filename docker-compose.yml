@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  customers-api:
+    build: ./ms-customer
+    container_name: customers-api
+    env_file:
+      - ./ms-customer/.env
+    environment:
+      # Sobreescribimos el HOST para que escuche dentro de docker
+      DB_HOST: blbymhcptmgag24en0uu-mysql.services.clever-cloud.com
+      DB_PORT: 3306
+      DB_USERNAME: umr72s0kyc4v3zcv
+      DB_PASSWORD: RcD5LZq3VbSO6XxR7sLo
+      DB_NAME: blbymhcptmgag24en0uu
+      SERVICE_TOKEN: classified-access-allowed
+    ports:
+      - "3001:3001"
+
+  orders-api:
+    build: ./ms-orders
+    container_name: orders-api
+    env_file:
+      - ./ms-orders/.env
+    environment:
+      DB_HOST: blbymhcptmgag24en0uu-mysql.services.clever-cloud.com
+      DB_PORT: 3306
+      DB_USERNAME: umr72s0kyc4v3zcv
+      DB_PASSWORD: RcD5LZq3VbSO6XxR7sLo
+      DB_NAME: blbymhcptmgag24en0uu
+      CUSTOMER_SERVICE_URL: http://customers-api:3001  # Usa el nombre del contenedor, no localhost
+      SERVICE_TOKEN: classified-access-allowed
+    ports:
+      - "3002:3002"
+    depends_on:
+      - customers-api
