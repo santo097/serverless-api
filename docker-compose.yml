@@ -7,7 +7,6 @@ services:
     env_file:
       - ./ms-customer/.env
     environment:
-      # Sobreescribimos el HOST para que escuche dentro de docker
       DB_HOST: blbymhcptmgag24en0uu-mysql.services.clever-cloud.com
       DB_PORT: 3306
       DB_USERNAME: umr72s0kyc4v3zcv
@@ -28,7 +27,7 @@ services:
       DB_USERNAME: umr72s0kyc4v3zcv
       DB_PASSWORD: RcD5LZq3VbSO6XxR7sLo
       DB_NAME: blbymhcptmgag24en0uu
-      CUSTOMER_SERVICE_URL: http://customers-api:3001  # Usa el nombre del contenedor, no localhost
+      CUSTOMER_SERVICE_URL: http://customers-api:3001
       SERVICE_TOKEN: classified-access-allowed
     ports:
       - "3002:3002"
